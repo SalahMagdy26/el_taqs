@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:weather_condetion/cubits/get_weather_cubit/get_weather_cubit.dart';
+import 'package:weather_condetion/cubits/get_weather_cubit/get_weather_states.dart';
 import 'package:weather_condetion/views/search_view.dart';
-
+import 'package:weather_condetion/widgets/weather_info_body.dart';
 import '../widgets/no_weather_body.dart';
-// import '../widgets/weather_info_body.dart';
 
 class HomeView extends StatelessWidget {
   const HomeView({super.key});
@@ -31,13 +33,25 @@ class HomeView extends StatelessWidget {
         ],
       ),
       body: Container(
-          decoration: const BoxDecoration(
-              image: DecorationImage(
-            image: AssetImage('assets/images/night_cloud.jpg'),
-            fit: BoxFit.fill,
-            // opacity: 0.80,
-          )),
-          child: const NoWeatherBody()),
+        decoration: const BoxDecoration(
+            image: DecorationImage(
+          image: AssetImage('assets/images/night_cloud.jpg'),
+          fit: BoxFit.fill,
+          // opacity: 0.80,
+        )),
+        child: BlocBuilder<GetWeatherCubit, WeatherStates>(
+          builder: (context, state) {
+            if (state is NoWeatherState) {
+              return const NoWeatherBody();
+            } else if (state is WeatherLoadedState) {
+              return  WeatherInfoBody(weatherModel: state.weatherModel ,);
+            } else {
+              return const Text('oops, there was an error , please try again');
+
+            }
+          },
+        ),
+      ),
     );
   }
 }
